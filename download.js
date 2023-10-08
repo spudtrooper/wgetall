@@ -138,11 +138,9 @@ const main = async (replacements, opts) => {
   };
 
   if (numThreads > 1) {
-    const total = replacements.length;
-    console.log(`downloading ${total} with ${numThreads} threads`);
     const limit = pLimit(numThreads);
     await Promise.all(replacements.map((r, i) => limit(() =>
-      processReplacement(r, () => `[${i + 1}/${total}: "${r}" ${done} done]`)
+      processReplacement(r, () => `[${i + 1}/${replacements.length}: "${r}" ${done} done]`)
     )));
   } else {
     replacements.forEach(async (r) => await processReplacement(r, () => `[${r}]`));
