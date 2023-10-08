@@ -12,7 +12,6 @@ To download the following URls with concurrency of 5 saving the outputs to `data
 - `https://www.imdb.com/list/ls050522997/_ajax?st_dt=&mode=detail&page=100&sort=list_order,asc`
 
 ```bash
-mkdir -p data
 scripts/run.sh --url_template 'https://www.imdb.com/list/ls050522997/_ajax?st_dt=&mode=detail&page={}&sort=list_order,asc' --t 5 -o data `seq 1 100`
 ```
 
