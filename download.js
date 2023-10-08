@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { join } from "path";
-import { existsSync, writeFileSync, readFileSync, readFile } from "fs";
+import { existsSync, writeFileSync, readFileSync, readFile, mkdirSync } from "fs";
 import parseCurl from "parse-curl";
 import { exec } from "child_process";
 import { tmpdir } from "os";
@@ -120,6 +120,9 @@ const main = async (replacements, opts) => {
     const res = await downloadFn(r, log);
     done++;
     if (outdir) {
+      if (!existsSync(outdir)) {
+        mkdirSync(outdir, { recursive: true });
+      }
       writeFileSync(f(), res);
       log(`wrote ${f()}`);
     } else {
