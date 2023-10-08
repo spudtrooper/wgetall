@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { join } from "path";
-import { existsSync, writeFileSync, readFileSync, readFile, mkdirSync } from "fs";
+import { existsSync, writeFileSync, readFileSync, readFile, mkdirSync, unlinkSync } from "fs";
 import parseCurl from "parse-curl";
 import { exec } from "child_process";
 import { tmpdir } from "os";
@@ -64,7 +64,7 @@ const curlExec = async (curlCommand, log) => {
 
   log(`downloading ${url} via curl`);
 
-  const tempFilePath = join(tmpdir(), "curloutput.html");
+  const tempFilePath = join(tmpdir(), `curl_${Math.random().toString(36).substring(2, 15)}.html`);
   curlCommand += ` -o ${tempFilePath}`;
 
   return new Promise((resolve, reject) => {
@@ -76,6 +76,11 @@ const curlExec = async (curlCommand, log) => {
             return;
           }
           resolve(stdout);
+          try {
+            unlinkSync(tempFilePath);
+          } catch (e) {
+            console.error(e);
+          }
         }));
   });
 };
