@@ -106,6 +106,8 @@ const main = async (replacements, opts) => {
   }
 
   if (!replacements.length) {
+    start = parseInt(start);
+    stop = parseInt(stop);
     if (start >= 0 && stop >= 0) {
       if (stop < start) {
         throw new Error("stop must be greater than start");
