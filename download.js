@@ -86,11 +86,20 @@ const curlExec = async (curlCommand, log) => {
 };
 
 const main = async (replacements, opts) => {
-  let { url_template, outdir, stealth, overwrite, verbose, curl_template, threads } = opts;
+  let { url_template,
+    outdir,
+    stealth,
+    overwrite,
+    verbose,
+    curl_template, threads,
+    extension,
+    start,
+    stop } = opts;
 
   const isStealth = stealth || false;
   const numThreads = parseInt(threads || 1);
   const curlTemplate = curl_template || "";
+  const ext = extension || "html";
 
   if (!(curl_template || url_template)) {
     throw new Error("--url_template or --curl_template required");
@@ -114,7 +123,7 @@ const main = async (replacements, opts) => {
   let done = 0;
   const processReplacement = async (r, prefixFn) => {
     const log = (msg) => console.log(`${prefixFn()} ${msg}`);
-    const f = () => join(outdir, r + ".html");
+    const f = () => join(outdir, r + "." + ext);
     if (outdir && !overwrite && existsSync(f())) {
       if (verbose) {
         log(`skipping ${url} because ${f()} exists`);
@@ -136,6 +145,19 @@ const main = async (replacements, opts) => {
 
     return res;
   };
+
+  if (!replacements.length) {
+    if (start >= 0 && stop >= 0) {
+      if (stop < start) {
+        throw new Error("stop must be greater than start");
+      }
+      replacements = Array(stop - start + 1).fill().map((_, i) => i + start);
+    }
+  }
+
+  if (!replacements.length) {
+    throw new Error("no replacements provided");
+  }
 
   if (numThreads > 1) {
     const limit = pLimit(numThreads);
