@@ -105,6 +105,19 @@ const main = async (replacements, opts) => {
     throw new Error("--url_template or --curl_template required");
   }
 
+  if (!replacements.length) {
+    if (start >= 0 && stop >= 0) {
+      if (stop < start) {
+        throw new Error("stop must be greater than start");
+      }
+      replacements = Array(stop - start + 1).fill().map((_, i) => i + start);
+    }
+  }
+
+  if (!replacements.length) {
+    throw new Error("no replacements provided");
+  }
+
   const downloadFn = async (r, log) => {
     if (curlTemplate) {
       const curlCommandTemplate = readFileSync(curlTemplate, "utf8");
@@ -145,19 +158,6 @@ const main = async (replacements, opts) => {
 
     return res;
   };
-
-  if (!replacements.length) {
-    if (start >= 0 && stop >= 0) {
-      if (stop < start) {
-        throw new Error("stop must be greater than start");
-      }
-      replacements = Array(stop - start + 1).fill().map((_, i) => i + start);
-    }
-  }
-
-  if (!replacements.length) {
-    throw new Error("no replacements provided");
-  }
 
   if (numThreads > 1) {
     const limit = pLimit(numThreads);
