@@ -120,9 +120,13 @@ const main = async (replacements, opts) => {
     throw new Error("no replacements provided");
   }
 
+  let curlCommandTemplate;
+  if (curlTemplate) {
+    curlCommandTemplate = readFileSync(curlTemplate, "utf8");
+  }
+
   const downloadFn = async (r, log) => {
     if (curlTemplate) {
-      const curlCommandTemplate = readFileSync(curlTemplate, "utf8");
       const curlCommand = curlCommandTemplate.replace("{}", r);
       return isStealth
         ? curlViaPuppeteer(curlCommand, log)
@@ -135,12 +139,25 @@ const main = async (replacements, opts) => {
     }
   };
 
+  const getUrl = (r) => {
+    if (curlTemplate) {
+      const curlCommand = curlCommandTemplate.replace("{}", r);
+      const {
+        url,
+      } = parseCurl(curlCommand);
+      return url;
+    }
+    const url = url_template.replace("{}", r);
+    return url;
+  };
+
   let done = 0;
   const processReplacement = async (r, prefixFn) => {
     const log = (msg) => console.log(`${prefixFn()} ${msg}`);
     const f = () => join(outdir, r + "." + ext);
     if (outdir && !overwrite && existsSync(f())) {
       if (verbose) {
+        const url = getUrl(r);
         log(`skipping ${url} because ${f()} exists`);
       }
       return;
