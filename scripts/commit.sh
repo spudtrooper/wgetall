@@ -1,5 +1,6 @@
 #!/bin/sh
 
+msg=${@:-update $(date)}
+
 git add .
-git commit -m "update $(date)"
-open /Applications/GitHub\ Desktop.app
+git commit -am "$msg"
