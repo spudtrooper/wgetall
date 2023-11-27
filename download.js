@@ -94,12 +94,15 @@ const main = async (replacements, opts) => {
     curl_template, threads,
     extension,
     start,
-    stop } = opts;
+    stop,
+    inc: incStr,
+  } = opts;
 
   const isStealth = stealth || false;
   const numThreads = parseInt(threads || 1);
   const curlTemplate = curl_template || "";
   const ext = extension || "html";
+  const inc = parseInt(incStr || "1");
 
   if (!(curl_template || url_template)) {
     throw new Error("--url_template or --curl_template required");
@@ -112,7 +115,11 @@ const main = async (replacements, opts) => {
       if (stop < start) {
         throw new Error("stop must be greater than start");
       }
-      replacements = Array(stop - start + 1).fill().map((_, i) => i + start);
+      if (inc >= 2) {
+        replacements = Array.from({ length: Math.ceil((stop - start + 1) / inc) }, (_, i) => i * inc + start);
+      } else {
+        replacements = Array(stop - start + 1).fill().map((_, i) => i + start);
+      }
     }
   }
 

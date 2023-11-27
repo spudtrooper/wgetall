@@ -21,6 +21,7 @@ program
   .option("-t, --threads <n>", "Number of threads to use", "1")
   .option("--start <start-index>", "Start of replacements (use with --stop", -1)
   .option("--stop <stop-index>", "Stop of replacements (use with --start", -1)
+  .option("--inc <increment>", "Increment of replacements when using start and stop", "1")
   .action(async (replacements, opts) => await download(replacements, opts));
 
 program.parse(process.argv);
