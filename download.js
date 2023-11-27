@@ -96,6 +96,7 @@ const main = async (replacements, opts) => {
     start,
     stop,
     inc: incStr,
+    sleep,
   } = opts;
 
   const isStealth = stealth || false;
@@ -103,6 +104,7 @@ const main = async (replacements, opts) => {
   const curlTemplate = curl_template || "";
   const ext = extension || "html";
   const inc = parseInt(incStr || "1");
+  const sleepMillis = parseInt(sleep || "0");
 
   if (!(curl_template || url_template)) {
     throw new Error("--url_template or --curl_template required");
@@ -180,6 +182,10 @@ const main = async (replacements, opts) => {
       log(`wrote ${f()}`);
     } else {
       log(res);
+    }
+
+    if (sleepMillis > 0) {
+      await new Promise((resolve) => setTimeout(resolve, sleepMillis));
     }
 
     return res;

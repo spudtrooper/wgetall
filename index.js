@@ -22,6 +22,7 @@ program
   .option("--start <start-index>", "Start of replacements (use with --stop", -1)
   .option("--stop <stop-index>", "Stop of replacements (use with --start", -1)
   .option("--inc <increment>", "Increment of replacements when using start and stop", "1")
+  .option("--sleep <millis>", "Sleep time between requests", "0")
   .action(async (replacements, opts) => await download(replacements, opts));
 
 program.parse(process.argv);
