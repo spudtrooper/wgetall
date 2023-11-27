@@ -58,9 +58,7 @@ const simpleDownload = async (url, log) => {
 };
 
 const curlExec = async (curlCommand, log) => {
-  const {
-    url,
-  } = parseCurl(curlCommand);
+  const { url } = parseCurl(curlCommand);
 
   log(`downloading ${url} via curl`);
 
@@ -191,14 +189,10 @@ const main = async (replacements, opts) => {
     return res;
   };
 
-  if (numThreads > 1) {
-    const limit = pLimit(numThreads);
-    await Promise.all(replacements.map((r, i) => limit(() =>
-      processReplacement(r, () => `[${i + 1}/${replacements.length}: "${r}" ${done} done]`)
-    )));
-  } else {
-    replacements.forEach(async (r) => await processReplacement(r, () => `[${r}]`));
-  }
+  const limit = pLimit(numThreads);
+  await Promise.all(replacements.map((r, i) => limit(() =>
+    processReplacement(r, () => `[${i + 1}/${replacements.length}: "${r}" ${done} done]`)
+  )));
 };
 
 export default main;
